@@ -1,0 +1,84 @@
+﻿
+/* Register Page Styling */
+
+body {
+    background: linear-gradient(135deg, #e0f7fa, #f8f9fa);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.account-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem;
+    min-height: 100vh;
+}
+
+.account-box {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    opacity: 0.97;
+}
+
+    .account-box h2 {
+        font-weight: 600;
+        color: #1b6ec2;
+    }
+
+    .account-box label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .account-box .form-control {
+        border-radius: 50px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s;
+    }
+
+        .account-box .form-control:focus {
+            border-color: #1b6ec2;
+            box-shadow: 0 0 0 0.25rem rgba(27, 110, 194, 0.25);
+        }
+
+    .account-box .btn-success {
+        border-radius: 50px;
+        padding: 0.6rem;
+        font-weight: 600;
+        background-color: #1b6ec2;
+        border: none;
+    }
+
+        .account-box .btn-success:hover {
+            background-color: #145ba2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .account-box .text-center a {
+        color: #1b6ec2;
+        text-decoration: none;
+    }
+
+        .account-box .text-center a:hover {
+            text-decoration: underline;
+        }
+
+/*    change      */
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+}
+
+input[type="password"]::-webkit-clear-button {
+    display: none;
+}

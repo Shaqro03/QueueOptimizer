@@ -1,0 +1,111 @@
+﻿
+
+/* Background and layout */
+body {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-bg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+}
+
+/* Glass effect card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Avatar styles */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #dee2e6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+.form-control {
+    border-radius: 12px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.2s ease;
+}
+
+    .form-control:focus {
+        border-color: #20c997;
+        box-shadow: 0 0 0 0.25rem rgba(32, 201, 151, 0.2);
+    }
+
+/* Buttons */
+.btn {
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.btn-success {
+    background-color: #20c997;
+    border-color: #20c997;
+}
+
+    .btn-success:hover {
+        background-color: #198f76;
+    }
+
+.btn-outline-secondary:hover {
+    background-color: #f1f3f5;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ffe3e3;
+}
+
+/* Navigation styling */
+.profile-nav {
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #dee2e6;
+}
+
+    .profile-nav .nav-link {
+        color: #333;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .profile-nav .nav-link:hover,
+        .profile-nav .nav-link.active {
+            color: #20c997;
+        }
+
+/* Responsive */
+@media (max-width: 576px) {
+    .glass-card {
+        padding: 20px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    position: relative;
+    top: 9px;
+}

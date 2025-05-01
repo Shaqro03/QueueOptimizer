@@ -1,0 +1,197 @@
+﻿ @model QueueOptimizer.ViewModels.ReservationFilterViewModel
+
+@{
+    ViewData["Title"] = "Restaurant Layout";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<nav class="profile-nav mb-4">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark fw-bold fs-5">
+            <img src="~/images/fork.png" alt="RestiQ Logo" class="logo-img" />
+            <span class="ms-0">RestiQ</span>
+        </a>
+        <div class="nav-links d-flex gap-3">
+            <a asp-controller="Account" asp-action="Profile" class="nav-link">My Profile</a>
+            <a asp-controller="Reservation" asp-action="MyReservations" class="nav-link">My Reservations</a>
+            <a asp-controller="Account" asp-action="Logout" class="nav-link text-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<form asp-action="Filter" asp-controller="Table" method="post" class="filters d-flex justify-content-center align-items-center gap-3 my-4">
+    <div>
+        <label>Date:</label>
+        <input asp-for="Date" type="date" class="form-control" />
+    </div>
+    <div>
+        <label>Start Time:</label>
+        <input asp-for="StartTime" type="time" class="form-control" min="09:30" max="23:45" />
+    </div>
+    <div>
+        <label>End Time:</label>
+        <input asp-for="EndTime" type="time" class="form-control" min="09:45" max="01:00" />
+    </div>
+    <div>
+        <label>People:</label>
+        <select asp-for="PeopleCount" class="form-control">
+            @for (int i = 1; i <= 6; i++)
+            {
+                <option value="@i">@i</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Check Availability</button>
+</form>
+
+
+<div class="layout-section">
+    <h2 class="layout-title">Restaurant Layout</h2>
+
+    <div class="floor-layout">
+        @foreach (var table in Model.AllTables)
+        {
+            var isBusy = Model.BusyTables.Any(t => t.Id == table.Id);
+            var isMatching = Model.AvailableTables.Any(t => t.Id == table.Id);
+            string color = isBusy ? "red" : (isMatching ? "green" : "white");
+
+            var tableClass = table.Seats == 1 ? "chair-bar" :
+            table.Seats <= 4 ? "table-small" : "table-big";
+
+            <div class="@tableClass table-btn" style="left:@(table.PositionX)px; top:@(table.PositionY)px; background-color:@color !important;"
+                 data-id="@table.Id" data-seats="@table.Seats">
+                <div>@(table.Seats == 1 ? "1" : table.Seats + " seats")</div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Մոդալ պատուհան -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content p-3">
+            <h5 class="modal-title">Confirm Reservation</h5>
+            <p>Do you want to reserve this table?</p>
+            <input type="hidden" id="modalTableId" />
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmReserve" class="btn btn-success">Yes, Reserve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedTableId = 0;
+
+        // Սեղանի վրա սեղմելու գործողություն միայն կանաչների համար
+        document.querySelectorAll(".table-btn").forEach(btn => {
+            if (btn.style.backgroundColor.includes("green")) {
+                btn.addEventListener("click", function () {
+                    selectedTableId = this.getAttribute("data-id");
+                    document.getElementById("modalTableId").value = selectedTableId;
+                    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                    modal.show();
+                });
+            }
+        });
+
+        document.getElementById("confirmReserve").addEventListener("click", function () {
+            const tableId = selectedTableId;
+            const date = document.querySelector("[name='Date']").value;
+            const startTime = document.querySelector("[name='StartTime']").value;
+            const endTime = document.querySelector("[name='EndTime']").value;
+
+            fetch('/Reservation/Reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tableId: parseInt(tableId),
+                    reservationDate: date,
+                    startTime: startTime,
+                    endTime: endTime
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/Reservation/MyReservations';
+                    } else {
+                        alert(data.message || 'Reservation failed');
+                    }
+                });
+        });
+    </script>
+}
+
+<style>
+    .layout-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: #000000;
+        text-align: center;
+    }
+    .floor-layout {
+        position: relative;
+        width: 900px;
+        height: 750px;
+        margin: 0 auto;
+        background-color: #f8f9fa;
+        border: 2px dashed #ccc;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .chair-bar, .table-small, .table-big {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+        transition: transform 0.3s;
+        color: #0a0a0a;
+        border: 2px solid #1b6ec2;
+        cursor: pointer;
+    }
+
+    .chair-bar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+    }
+
+    .table-small {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .table-big {
+        width: 100px;
+        height: 60px;
+        border-radius: 30px;
+        flex-direction: column;
+        text-align: center;
+    }
+
+        .chair-bar:hover,
+        .table-small:hover,
+        .table-big:hover {
+            transform: scale(1.1);
+        }
+
+    .filters label {
+        font-weight: 500;
+        margin-bottom: 3px;
+    }
+
+    .filters .form-control {
+        width: 120px;
+    }
+</style>

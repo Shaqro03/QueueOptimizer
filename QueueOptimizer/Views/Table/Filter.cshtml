@@ -1,0 +1,134 @@
+﻿@using QueueOptimizer.Models
+@model QueueOptimizer.ViewModels.ReservationFilterViewModel
+
+@{
+    ViewData["Title"] = "Restaurant Layout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Check Availability</h2>
+
+<form asp-action="Filter" asp-controller="Table" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="row mb-3">
+        <div class="col">
+            <label>Date</label>
+            <input asp-for="Date" type="date" class="form-control" />
+        </div>
+        <div class="col">
+            <label>Start Time</label>
+            <input asp-for="StartTime" type="time" class="form-control" />
+        </div>
+        <div class="col">
+            <label>End Time</label>
+            <input asp-for="EndTime" type="time" class="form-control" />
+        </div>
+        <div class="col">
+            <label>People</label>
+            <select asp-for="PeopleCount" class="form-control">
+                @for (int i = 1; i <= 6; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+        <div class="col">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary form-control">Check Availability</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.AllTables?.Any() == true)
+{
+    <style>
+        .green-table {
+            background-color: green !important;
+            color: white;
+        }
+
+        .red-table {
+            background-color: red !important;
+            color: white;
+        }
+
+        .white-table {
+            background-color: white !important;
+            color: black;
+        }
+    </style>
+
+    <h3 class="text-center mt-4">Restaurant Layout</h3>
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+        @foreach (var table in Model.AllTables)
+        {
+            var isBusy = Model.BusyTables.Any(t => t.Id == table.Id);
+            var isMatching = Model.AvailableTables.Any(t => t.Id == table.Id);
+            var cssClass = isBusy ? "red-table" : (isMatching ? "green-table" : "white-table");
+
+            <button class="table-btn btn @cssClass"
+                    style="width:80px; height:80px; border-radius:50%; border:1px solid #ccc;"
+                    data-id="@table.Id"
+                    data-seats="@table.Seats"
+            @(isMatching ? "data-bs-toggle='modal' data-bs-target='#confirmModal'" : "")
+            @(isBusy ? "disabled" : "")>
+                @table.Seats seats
+            </button>
+        }
+    </div>
+}
+
+<!-- Reservation Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content p-3">
+            <h5 class="modal-title">Confirm Reservation</h5>
+            <p>Do you want to reserve this table?</p>
+            <input type="hidden" id="modalTableId" />
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmReserve" class="btn btn-success">Yes, Reserve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedTableId = 0;
+
+        document.querySelectorAll(".table-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                selectedTableId = this.getAttribute("data-id");
+                document.getElementById("modalTableId").value = selectedTableId;
+            });
+        });
+
+        document.getElementById("confirmReserve").addEventListener("click", function () {
+            const tableId = selectedTableId;
+            const date = document.querySelector("[name='Date']").value;
+            const startTime = document.querySelector("[name='StartTime']").value;
+            const endTime = document.querySelector("[name='EndTime']").value;
+
+            fetch('/Reservation/Reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tableId: parseInt(tableId),
+                    reservationDate: date,
+                    startTime: startTime,
+                    endTime: endTime
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/Reservation/MyReservations';
+                    } else {
+                        alert(data.message || 'Reservation failed');
+                    }
+                });
+        });
+    </script>
+}

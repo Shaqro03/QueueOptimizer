@@ -1,0 +1,117 @@
+﻿ @model QueueOptimizer.ViewModels.ReservationListViewModel
+@{
+    ViewData["Title"] = "My Reservations";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<nav class="profile-nav mb-4">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark fw-bold fs-5">
+            <img src="~/images/fork.png" alt="RestiQ Logo" class="logo-img" />
+            <span class="ms-0">RestiQ</span>
+        </a>
+        <div class="nav-links d-flex gap-3">
+            <a asp-controller="Account" asp-action="Profile" class="nav-link ">My Profile</a>
+            <a asp-controller="Reservation" asp-action="MyReservations" class="nav-link active">My Reservations</a>
+            <a asp-controller="Account" asp-action="Logout" class="nav-link text-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="reservation-section">
+    <h2 class="reservation-title">My Reservations</h2>
+
+    <!-- Success/Error alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @{
+        var counter = 1;
+    }
+
+    @if (Model.Upcoming.Any())
+    {
+        <h4 class="mb-3 text-success">Upcoming</h4>
+        @foreach (var res in Model.Upcoming)
+        {
+            <div class="reservation-card">
+                <div class="reservation-info">
+                    <div class="reservation-details">
+                        <h5>Reservation #@counter</h5>
+                        <span>Table: @res.TableId</span>
+                        <span>Seats: @res.Table.Seats</span>
+                        <span>
+                            Date: @res.ReservationDate.ToString("yyyy-MM-dd")
+                            @res.StartTime.ToString(@"hh\:mm") - @res.EndTime.ToString(@"hh\:mm")
+                        </span>
+
+                    </div>
+                    <div class="reservation-actions">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelModal-@res.Id">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="cancelModal-@res.Id" tabindex="-1" aria-labelledby="cancelModalLabel-@res.Id" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="cancelModalLabel-@res.Id">Cancel Reservation</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <p class="mb-0">Are you want to cancel this reservation?</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <form asp-action="CancelReservation" asp-controller="Reservation" method="post">
+                                <input type="hidden" name="Id" value="@res.Id" />
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="submit" class="btn btn-danger">Yes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            counter++;
+        }
+    }
+
+    @if (Model.Past.Any())
+    {
+        <h4 class="mt-5 mb-3 text-muted">Past</h4>
+        @foreach (var res in Model.Past)
+        {
+            <div class="reservation-card past-reservation-card">
+                <div class="reservation-info">
+                    <div class="reservation-details">
+                        <h5>Table @res.TableId</h5>
+                        <span>Seats: @res.Table.Seats</span>
+                        <span>
+                            Date: @res.ReservationDate.ToString("yyyy-MM-dd")
+                            @res.StartTime.ToString(@"hh\:mm") - @res.EndTime.ToString(@"hh\:mm")
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+ 

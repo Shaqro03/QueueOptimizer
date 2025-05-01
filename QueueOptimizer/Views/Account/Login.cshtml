@@ -1,0 +1,183 @@
+﻿@model QueueOptimizer.ViewModels.LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login - RestiQ</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 5rem;
+            margin-top: -12rem;
+        }
+
+        .left-panel {
+            flex: 1;
+            max-width: 500px;
+            margin-right: 3rem;
+            text-align: left;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo-img {
+            height: 10rem;
+            width: auto;
+            margin-right: 0.1rem;
+            margin: -13rem 0 0 0;
+        }
+
+        .logo-title h1 {
+            font-size: 4rem;
+            color: #111;
+            font-weight: 750;
+            margin: -15rem 0 0 0;
+            
+        }
+
+        .left-panel p {
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            color: #333;
+            margin: -6rem 0 0 0;
+        }
+
+        .right-panel {
+            width: 100%;
+            max-width: 400px;
+            margin-left: 5rem;
+        }
+
+        .login-card {
+            background-color: #fff;
+            padding: 1.8rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+            .login-card .btn-primary {
+                background-color: #1877f2;
+                border: none;
+                font-weight: bold;
+            }
+
+                .login-card .btn-primary:hover {
+                    background-color: #165fc0;
+                }
+
+            .login-card .btn-success {
+                font-weight: bold;
+            }
+
+        .form-control {
+            height: 50px;
+            font-size: 1rem;
+        }
+
+        .text-sm {
+            font-size: 0.9rem;
+        }
+
+        @@media (max-width: 768px) {
+            .login-container
+
+        {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .left-panel {
+            margin: 0 0 2rem 0;
+        }
+
+        .logo-title {
+            justify-content: center;
+
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <!-- Left panel -->
+        <div class="left-panel">
+            <div class="logo-title">
+                <img src="~/images/fork.png" alt="RestiQ Logo" class="logo-img" />
+                <h1>RestiQ</h1>
+            </div>
+            <p>RestiQ helps you skip the wait and save time.</p>
+        </div>
+
+        <!-- Right panel -->
+        <div class="right-panel">
+            <div class="login-card">
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2 text-center"></div>
+
+                    <div class="mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                 
+                    <div class="mb-3 position-relative">
+                        <input asp-for="Password" class="form-control" placeholder="Password" id="passwordInput" />
+                        <i id="togglePassword" class="fa fa-eye-slash position-absolute" style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <script>
+                        const togglePassword = document.getElementById('togglePassword');
+                        const passwordInput = document.getElementById('passwordInput');
+
+                        togglePassword.addEventListener('click', function () {
+                            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                            passwordInput.setAttribute('type', type);
+                            this.classList.toggle('fa-eye');
+                            this.classList.toggle('fa-eye-slash');
+                        });
+                    </script>
+
+
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Log In</button>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <a asp-action="VerifyEmail" class="text-decoration-none text-sm">Forgot password?</a>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-grid">
+                        <a asp-action="Register" class="btn btn-success btn-lg">Create new account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

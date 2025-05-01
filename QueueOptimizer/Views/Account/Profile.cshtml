@@ -1,0 +1,69 @@
+﻿@model QueueOptimizer.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<!-- Navigation Bar -->
+<nav class="profile-nav mb-4">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark fw-bold fs-5">
+            <img src="~/images/fork.png" alt="RestiQ Logo" class="logo-img" />
+            <span class="ms-0">RestiQ</span>
+        </a>
+        <div class="nav-links d-flex gap-3">
+            <a asp-controller="Account" asp-action="Profile" class="nav-link active">My Profile</a>
+            <a asp-controller="Reservation" asp-action="MyReservations" class="nav-link">My Reservations</a>
+            <a asp-controller="Account" asp-action="Logout" class="nav-link text-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Profile Section -->
+<div class="profile-bg">
+    <div class="glass-card">
+        <div class="text-center mb-4">
+            <img src="@Model.ProfilePicture" class="profile-avatar" alt="Profile Picture" />
+            <h3 class="fw-semibold mt-3 mb-1">@Model.FullName</h3>
+            <p class="text-muted mb-0">@Model.Email</p>
+        </div>
+
+        @if (!Model.ProfilePicture.Contains("default-profile.png"))
+        {
+            <form asp-action="RemoveProfilePicture" method="post" class="text-center mb-4">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Remove Profile Picture</button>
+            </form>
+        }
+
+        <form asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" value="@Model.Password" readonly />
+            </div>
+
+            <div class="d-grid mb-3">
+                <a asp-action="ChangePassword" asp-route-username="@Model.Email" class="btn btn-outline-secondary">Change Password</a>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload New Profile Picture</label>
+                <input asp-for="ProfileImage" type="file" class="form-control" />
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">Save All Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
